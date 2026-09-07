@@ -14,3 +14,4 @@ pdfminer
 python-docx
 docx2txt
 openpyxl
+jq
