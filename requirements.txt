@@ -16,3 +16,6 @@ docx2txt
 openpyxl
 jq
 matplotlib
+langchain-huggingface
+sentence-transformers
+langchain-chroma
