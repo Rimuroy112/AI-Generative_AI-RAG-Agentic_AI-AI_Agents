@@ -4,6 +4,7 @@ from random import randrange
 from typing import Optional
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import time
 
 app = FastAPI()
 
@@ -12,14 +13,17 @@ class post(BaseModel):
     content: str
     published: bool=True
 
-try:
-    conn = psycopg2.connect(host='localhost',database='fastapi',user='postgres',
-    password='Postgres123;;;',cursor_factory=RealDictCursor)
-    cursor = conn.cursor()
-    print("Database connection was succesfull !")
-except Exception as error:
-    print("Connecting to database failed")
-    print("Error:",error)
+while True:
+    try:
+        conn = psycopg2.connect(host='localhost',database='fastapi',user='postgres',
+        password='Postgres123;;;',cursor_factory=RealDictCursor)
+        cursor = conn.cursor()
+        print("Database connection was succesfull !")
+        break
+    except Exception as error:
+        print("Connecting to database failed")
+        print("Error:",error)
+        time.sleep(2)
     
     
 
@@ -38,7 +42,10 @@ def find_index_post(id):
         
 @app.get("/posts")
 def get_posts():
-    return {"data":my_posts}
+    cursor.execute("""select * from posts""")
+    posts = cursor.fetchall()
+    print(posts)
+    return {"data": posts}
 
 @app.post("/posts",status_code=status.HTTP_201_CREATED)
 def create_posts(post: post):
