@@ -19,3 +19,5 @@ matplotlib
 langchain-huggingface
 sentence-transformers
 langchain-chroma
+psycopg2
+sqlalchemy
