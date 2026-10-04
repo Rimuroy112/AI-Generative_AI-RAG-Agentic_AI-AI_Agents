@@ -48,7 +48,8 @@ def find_index_post(id):
 
 @app.get("/sqlalchemy")
 def test_posts(db: Session = Depends(get_db)):
-    return {"status":"success"}
+    posts = db.query(models.Post).all() 
+    return {"data":posts}
         
 @app.get("/posts")
 def get_posts():

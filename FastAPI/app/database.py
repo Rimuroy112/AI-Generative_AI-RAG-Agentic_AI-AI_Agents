@@ -5,7 +5,7 @@ SQLALCHEMY_DATABASE_URL = 'postgresql://postgres:Postgres123;;;@localhost/fastap
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-SessionLocal = sessionmaker(autocommit=False, autoFlash=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
