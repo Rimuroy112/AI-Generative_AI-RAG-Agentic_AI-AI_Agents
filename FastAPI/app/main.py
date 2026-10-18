@@ -1,11 +1,10 @@
 from fastapi import FastAPI,Response,status,HTTPException, Depends
-from pydantic import BaseModel
 from random import randrange
 from typing import Optional
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
-from . import models
+from . import models,schemas
 from .database import engine,get_db
 from sqlalchemy.orm import Session
 
@@ -13,11 +12,6 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-
-class post(BaseModel):
-    title: str
-    content: str
-    published: bool=True
 
 while True:
     try:
