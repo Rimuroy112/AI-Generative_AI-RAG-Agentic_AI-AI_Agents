@@ -43,14 +43,14 @@ def find_index_post(id):
 @app.get("/sqlalchemy")
 def test_posts(db: Session = Depends(get_db)):
     posts = db.query(models.Post).all() 
-    return {"data":posts}
+    return posts
         
 @app.get("/posts")
 def get_posts():
     cursor.execute("""select * from posts""")
     posts = cursor.fetchall()
     print(posts)
-    return {"data": posts}
+    return posts
 
 @app.post("/posts",status_code=status.HTTP_201_CREATED)
 def create_posts(post: schemas.PostCreate,db: Session = Depends(get_db)):
@@ -66,7 +66,7 @@ def create_posts(post: schemas.PostCreate,db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_post)
     
-    return {"data":new_post}
+    return new_post
 
 
 @app.get("/posts/{id}")
@@ -82,7 +82,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {'message':f"Post with id: {id} was not found"}
     print(post)
-    return {"post_details": post}
+    return post
 
 
 @app.delete("/posts/{id}",status_code=status.HTTP_204_NO_CONTENT)
@@ -115,4 +115,4 @@ def update_post(id:int, updated_post:schemas.PostCreate, db: Session = Depends(g
                                 detail=f"post with id: {id} does not found")
     post_query.update(updated_post.dict(),synchronize_session=False)
     db.commit()
-    return {"data": post_query.first()}
+    return post_query.first()
