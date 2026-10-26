@@ -21,3 +21,4 @@ sentence-transformers
 langchain-chroma
 psycopg2
 sqlalchemy
+langchain-classic
