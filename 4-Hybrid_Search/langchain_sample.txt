@@ -1,0 +1,51 @@
+LangChain is an open-source framework designed to simplify the construction of applications powered by
+large language models (LLMs), serving as the easiest starting point for developers while remaining 
+flexible and production-ready. Its core philosophy rests on the belief that LLMs become far more powerful
+when combined with external data sources, and that future applications will become increasingly agentic—capable
+of reasoning and acting autonomously. LangChain addresses two central challenges: standardizing model 
+inputs and outputs across different providers so developers can easily switch to the latest state-of-the-art
+models without vendor lock-in, and making it simple to use models for orchestrating complex flows that interact
+with other data and computation through dynamically defined tools.The framework provides four main building
+blocks. Chains connect multiple operations in sequence, where the output of one step becomes the input to
+the next, enabling multi-stage reasoning rather than asking an LLM to handle a complex task all at once. Prompts 
+are structured text inputs that guide how the LLM processes information at each stage, ensuring each step 
+produces the right output for the next. Retrievers find and return relevant information from external sources 
+like documents or databases, typically working with vector indices and embeddings to locate semantically similar 
+content—this is what makes retrieval-augmented generation (RAG) possible. Tools represent external functionality 
+the LLM can invoke, such as querying databases, calling web APIs, or performing calculations, extending the system 
+beyond text generation.To understand how these pieces fit together in practice, consider the RAG pipeline, which 
+is one of LangChain's most common use cases. The process begins with ingestion: document loaders pull data from 
+sources like PDFs, databases, or web pages, returning standardized Document objects that the framework can work 
+with . Because LLMs have finite context windows and cannot ingest entire corpora at once, the loaded documents 
+must be split into smaller chunks using text splitters. LangChain's RecursiveCharacterTextSplitter is the recommended 
+starting point, as it attempts to keep larger units like paragraphs intact and only falls back to sentences or 
+words when a chunk exceeds the size limit, providing a solid balance between preserving context and managing 
+chunk size . The chunk size and overlap are typically set in tokens rather than characters to align with how 
+models actually process text.Once chunked, the text must be converted into a format that enables semantic search. 
+Embedding models turn text into vectors of numbers so that texts with similar meaning land close together in vector 
+space . LangChain supports a wide range of embedding integrations, from hosted options like OpenAIEmbeddings to local 
+open-source models through HuggingFaceEmbeddings, such as the all-MiniLM-L6-v2 model which produces 384-dimensional 
+vectors and runs efficiently on CPU . The choice of embedding model involves trade-offs between quality 
+(often measured by the MTEB leaderboard), cost, latency, and dimensionality, with larger vectors typically offering more 
+accuracy at the expense of storage and compute .These embeddings are then stored in a vector store, a specialized 
+database for storing and searching vectors efficiently. FAISS (Facebook AI Similarity Search) is one of the most 
+popular choices in LangChain, offering efficient similarity search and clustering of dense vectors, with 
+support for saving and loading indices to disk . When a query arrives, it is embedded using the same model, 
+and the vector store returns the most similar chunks—this is dense retrieval, the foundation of semantic search.
+However, dense retrieval has a well-known blind spot: it can quietly miss the exact tokens that matter most, such as 
+product SKUs, function names, or error codes like ERR_2043 . This is where BM25 comes in. BM25 (Okapi BM25) is a 
+ranking function from traditional information retrieval that estimates document relevance based on term frequency 
+and rarity, and LangChain provides a BM25Retriever that uses the rank_bm25 package . While dense retrieval excels 
+at capturing meaning, BM25 excels at exact keyword matching—the two approaches are complementary.Hybrid search 
+combines them. LangChain's EnsembleRetriever takes multiple retrievers and fuses their results using weighted 
+scoring or Reciprocal Rank Fusion, allowing you to balance dense and sparse retrieval according to your needs . 
+A typical configuration might use weights of 0.7 for the dense retriever and 0.3 for BM25, though the optimal balance 
+depends on the corpus and query patterns. The result is a retrieval system that captures both semantic similarity 
+and exact term matches, significantly improving recall over either method alone.LangChain was launched as a Python 
+package in October 2022, a month before ChatGPT, with two components: LLM abstractions and "chains" for common 
+use cases like RAG. The name comes from "Language" models and "Chains." General-purpose agents based on the 
+ReAct paper were added in December 2022, followed by a JavaScript version, the formation of LangChain 
+Inc., support for OpenAI's function calling, the release of LangSmith for observability and evals, and version 0.1.0 
+in early 2024 marking a shift toward production stability. LangGraph was released as a low-level orchestration 
+library for developers needing precise control over agent flows, and LangChain now boasts over 700 integrations 
+with the ecosystem continuing to evolve toward agentic applications.
