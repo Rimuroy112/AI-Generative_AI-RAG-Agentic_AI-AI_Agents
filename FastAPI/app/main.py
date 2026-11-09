@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Response,status,HTTPException, Depends
 from random import randrange
-from typing import Optional
+from typing import Optional, List
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
@@ -40,8 +40,8 @@ def find_index_post(id):
         if p["id"] == id:
             return i
 
-@app.get("/sqlalchemy")
-def test_posts(db: Session = Depends(get_db)):
+@app.get("/posts",response_model=List[schemas.Post])
+def gets_posts(db: Session = Depends(get_db)):
     posts = db.query(models.Post).all() 
     return posts
         
@@ -69,7 +69,7 @@ def create_posts(post: schemas.PostCreate,db: Session = Depends(get_db)):
     return new_post
 
 
-@app.get("/posts/{id}")
+@app.get("/posts/{id}",response_model=schemas.Post)
 def get_post(id: int, db: Session = Depends(get_db)):
     # cursor.execute("""SELECT * FROM posts WHERE id = %s""", (str(id)))
     # post = cursor.fetchone()
@@ -101,7 +101,7 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 
 
 
-@app.put("/posts/{id}")
+@app.put("/posts/{id}",response_model=schemas.Post)
 def update_post(id:int, updated_post:schemas.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
     #                (post.title, post.content, post.published, str(id)))
